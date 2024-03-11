@@ -1,24 +1,15 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "5.39.1"
-    }
-  }
-}
-
 # Configure the AWS Provider
 provider "aws" {
   region = "us-east-2"
 }
 
-variable "names" {
+variable "envs" {
   type    = list(string)
-  default = ["최시은", "변의주"]
+  default = ["dev", "prd", ""]
 }
 
 module "personal_custom_vpc" {
-  for_each = toset([for s in var.names : "${s}_test"])
+  for_each = toset([for s in var.envs : s if s != ""])
   source   = "./custom_vpc"
-  env      = "personal_${each.key}"
+  env      = each.key
 }
